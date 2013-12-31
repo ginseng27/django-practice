@@ -5,10 +5,32 @@ from django.http import HttpResponseRedirect
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, loader
+from django.views import generic
 
 from polls.models import Poll, Choice
 
 # Create your views here.
+
+#####################################
+# using views for generic
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_poll_list'
+
+    def get_queryset(self):
+        """Return the last five published polls."""
+        return Poll.objects.order_by('-pub_date')[:5]
+
+
+class DetailView(generic.DetailView):
+    model = Poll
+    template_name = 'polls/detail.html'
+
+
+class ResultsView(generic.DetailView):
+    model = Poll
+    template_name = 'polls/results.html'
+######################################
 
 def index(request):
     latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
